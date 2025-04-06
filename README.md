@@ -9,4 +9,4 @@ This repository contains tests from [unit 10](https://course.yet-another-js-cour
 
 ## Getting Started
 - npm install
-- npx playwright test tests/unit10.spec.ts
+- npm run test:unit10
