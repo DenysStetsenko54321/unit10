@@ -10,3 +10,4 @@ This repository contains tests from [unit 10](https://course.yet-another-js-cour
 ## Getting Started
 - npm install
 - npm run test:unit10
+- npm run test:unit11
