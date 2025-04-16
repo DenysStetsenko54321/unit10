@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test:unit10": "npx playwright test tests/unit10.spec.ts"
+    "test:unit10": "npx playwright test tests/unit10.spec.ts",
+    "test:unit11": "npx playwright test tests/unit11.spec.ts"
   },
   "keywords": [],
   "author": "",
