@@ -8,9 +8,9 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.locator('#email');
+    this.emailInput    = page.locator('#email');
     this.passwordInput = page.locator('#password');
-    this.submitButton = page.locator('.btnSubmit');
+    this.submitButton  = page.locator('.btnSubmit');
   }
 
   async goto() {
@@ -18,8 +18,11 @@ export class LoginPage {
   }
 
   async login(email: string, password: string) {
-    await this.emailInput.pressSequentially(email);
-    await this.passwordInput.pressSequentially(password);
-    await this.submitButton.click();
+    await this.emailInput.fill(email);
+    await this.passwordInput.fill(password);
+    await Promise.all([
+      this.page.waitForURL('**/account'),
+      this.submitButton.click(),
+    ]);
   }
 }
