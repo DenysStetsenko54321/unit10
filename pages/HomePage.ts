@@ -1,33 +1,33 @@
-import { Page, Locator, expect } from "@playwright/test";
+import { expect, Locator, Page } from '@playwright/test';
 
 export class HomePage {
   readonly page: Page;
-  readonly productTitles: Locator;
+  readonly productCards: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.productTitles = page.locator(".product-title");
+    this.productCards = page.locator('[data-test^="product-"][href^="/product/"]');
   }
 
   async goto() {
-    await this.page.goto("/");
+    await this.page.goto('/');
   }
 
   async expectOnHomePage() {
-    await expect(this.page.locator('[data-test="page-title"]')).toHaveText(
-      "My account"
-    );
+    await expect(this.page.locator('[data-test="page-title"]')).toHaveText('My account');
   }
 
   async getProductNames(): Promise<string[]> {
-    const count = await this.productTitles.count();
-    const names: string[] = [];
+    return this.productCards
+      .locator('[data-test^="product-"][href^="/product/"]')
+      .allTextContents();
+  }
 
-    for (let i = 0; i < count; i++) {
-      names.push(await this.productTitles.nth(i).innerText());
-    }
-
-    return names;
+  async getProductPrices(): Promise<number[]> {
+    const priceStrings = await this.productCards
+      .locator('[data-test="product-price"]')
+      .allTextContents();
+    return priceStrings.map(str => parseFloat(str.replace('$', '').trim()));
   }
 
   async openProductDetails() {
@@ -38,20 +38,26 @@ export class HomePage {
     await this.page.locator('[alt="Slip Joint Pliers"]').click();
   }
 
-  async getProductPrices(): Promise<number[]> {
-    const productCards = this.page.locator('[data-test="product-card"]');
-    const count = await productCards.count();
+  async openNthProduct(index: number) {
+    await this.productCards.nth(index).click();
+  }
 
-    const prices = [];
-    for (let i = 0; i < count; i++) {
-      const priceText = await productCards
-        .nth(i)
-        .locator('[data-test="product-price"]')
-        .innerText();
-      const price = parseFloat(priceText.replace("$", ""));
-      prices.push(price);
-    }
+  async getNthProductName(index: number): Promise<string> {
+    const locator = this.productCards.nth(index).locator('[data-test="product-name"]');
+    await expect(locator).toBeVisible();
+    return (await locator.textContent())?.trim() || '';
+  }
 
-    return prices;
+  async getNthProductPrice(index: number): Promise<string> {
+    const locator = this.productCards.nth(index).locator('[data-test="product-price"]');
+    await expect(locator).toBeVisible();
+    return (await locator.textContent())?.trim() || '';
+  }
+
+  async addNthProductToCart(index: number) {
+    await this.productCards.nth(index).click();
+    const btn = this.page.locator('#btn-add-to-cart');
+    await expect(btn).toBeVisible();
+    await btn.click();
   }
 }
